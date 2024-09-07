@@ -1,8 +1,9 @@
+use std::process;
+
 pub mod common;
 pub mod tokenizer;
 
 fn main() {
-    // read file from command line
     let args: Vec<String> = std::env::args().collect();
     if args.len() != 2 {
         eprintln!("Usage: {} <filename>", args[0]);
@@ -13,6 +14,16 @@ fn main() {
     let source = std::fs::read_to_string(filename).expect("Failed to read file");
 
     let mut tokenizer = tokenizer::Tokenizer::new();
-    let tokens = tokenizer.tokenize(&source).unwrap();
-    tokenizer.print_tokens(&tokens);
+    let tokens = tokenizer.tokenize(&source);
+    match tokens {
+        Ok(tokens) => {
+            tokenizer.print_tokens(&tokens);
+        }
+        Err(msg) => {
+            println!("{}", msg);
+            process::exit(1);
+        }
+    }
+
+    process::exit(0);
 }
