@@ -101,7 +101,14 @@ impl Tokenizer {
                 }
                 // Operators
                 '+' => tokens.push(Token::new(pos.clone(), TokenType::Operator(Op::Add))),
-                '-' => tokens.push(Token::new(pos.clone(), TokenType::Operator(Op::Sub))),
+                '-' => {
+                    if let Some(&'>') = iter.peek() {
+                        iter.next();
+                        tokens.push(Token::new(pos.clone(), TokenType::RetArrow));
+                    } else {
+                        tokens.push(Token::new(pos.clone(), TokenType::Operator(Op::Sub)))
+                    }
+                },
                 '*' => tokens.push(Token::new(pos.clone(), TokenType::Operator(Op::Mul))),
                 '/' => tokens.push(Token::new(pos.clone(), TokenType::Operator(Op::Div))),
                 '%' => tokens.push(Token::new(pos.clone(), TokenType::Operator(Op::Mod))),

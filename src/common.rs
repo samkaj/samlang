@@ -51,6 +51,7 @@ pub enum TokenType {
     Whitespace,
     Comment,
     Newline,
+    RetArrow,
     EOF,
 }
 
