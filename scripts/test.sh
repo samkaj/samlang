@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Capture the start time
+START_TIME=$(date +%s)
+
 ROOT_DIR=$(dirname "$0")/..
 TEST_DIR=$ROOT_DIR/tests
 
@@ -16,15 +19,24 @@ for test in $TEST_DIR/*.sk; do
   test_name=$(basename $test)
   status=$(head -n 1 $test)
   status=${status:8}
-  $EXE $test > /dev/null
+  output=$($EXE $test)
 
   if [ $? -eq $status ]; then
-    echo "Test $test_name passed"
+    echo "[PASS] $test_name"
     ((PASS=PASS+1))
   else
-    echo "Test $test_name failed"
+    echo "[FAIL] $test_name"
+    echo $output
     ((FAIL=FAIL+1))
   fi
 done
 
-echo "[$PASS/$TOT] passed"
+
+END_TIME=$(date +%s)
+DURATION=$((END_TIME - START_TIME))
+
+if [ $PASS -eq $TOT ]; then
+  echo "[OK] $PASS/$TOT tests passed; duration: $(($DURATION))s"
+else
+  echo "[FAIL] $FAIL/$TOT tests failed; duration: $(($DURATION))s"
+fi
