@@ -48,6 +48,8 @@ pub enum TokenType {
     LeftCurly,
     RightCurly,
     Semicolon,
+    Colon,
+    Comma,
     Whitespace,
     Comment,
     Newline,

@@ -10,7 +10,10 @@ impl Tokenizer {
 
     pub fn print_tokens(&self, tokens: &Vec<Token>) {
         for token in tokens {
-            println!("{:?}", token.token_type);
+            println!(
+                "[{},{}] {:?}",
+                &token.pos.line, &token.pos.col, token.token_type
+            );
         }
     }
 
@@ -18,21 +21,43 @@ impl Tokenizer {
     pub fn tokenize(&mut self, input: &str) -> Result<Vec<Token>, String> {
         let mut tokens: Vec<Token> = Vec::new();
         let mut iter = input.chars().peekable();
-        let mut pos = Position { line: 0, col: 0 };
+        let mut pos = Position { line: 1, col: 1 };
+        let mut in_comment = false;
         while let Some(ch) = iter.next() {
+            if in_comment {
+                if ch == '\n' {
+                    in_comment = false;
+                } else {
+                    pos.col += 1;
+                    continue;
+                }
+            }
+
             match ch {
                 // Whitespace
                 ' ' | '\t' => {
+                    // multiple whitespaces are treated as one
+                    while let Some(&c) = iter.peek() {
+                        if c == ' ' || c == '\t' {
+                            pos.col += 1;
+                            iter.next();
+                        } else {
+                            break;
+                        }
+                    }
                     tokens.push(Token::new(pos.clone(), TokenType::Whitespace));
                 }
                 // Newline
                 '\n' => {
                     pos.line += 1;
-                    pos.col = 0;
+                    pos.col = 1;
                     tokens.push(Token::new(pos.clone(), TokenType::Newline));
                 }
+                '0' => {
+                    tokens.push(Token::new(pos.clone(), TokenType::Number(0)));
+                }
                 // Numbers
-                '1'..'9' => {
+                '1'..='9' => {
                     let n: i64 = iter::once(ch)
                         .chain(from_fn(|| {
                             iter.by_ref().next_if(|s| {
@@ -108,9 +133,17 @@ impl Tokenizer {
                     } else {
                         tokens.push(Token::new(pos.clone(), TokenType::Operator(Op::Sub)))
                     }
-                },
+                }
                 '*' => tokens.push(Token::new(pos.clone(), TokenType::Operator(Op::Mul))),
-                '/' => tokens.push(Token::new(pos.clone(), TokenType::Operator(Op::Div))),
+                '/' => {
+                    if let Some(&'/') = iter.peek() {
+                        in_comment = true;
+                        iter.next();
+                        tokens.push(Token::new(pos.clone(), TokenType::Comment));
+                    } else {
+                        tokens.push(Token::new(pos.clone(), TokenType::Operator(Op::Div)))
+                    }
+                }
                 '%' => tokens.push(Token::new(pos.clone(), TokenType::Operator(Op::Mod))),
                 '&' => tokens.push(Token::new(pos.clone(), TokenType::Operator(Op::And))),
                 '|' => tokens.push(Token::new(pos.clone(), TokenType::Operator(Op::Or))),
@@ -149,6 +182,7 @@ impl Tokenizer {
                     })
                     .collect();
                     tokens.push(Token::new(pos.clone(), TokenType::StrLiteral(string)));
+                    iter.next();
                 }
                 '(' => tokens.push(Token::new(pos.clone(), TokenType::LeftParen)),
                 ')' => tokens.push(Token::new(pos.clone(), TokenType::RightParen)),
@@ -156,7 +190,9 @@ impl Tokenizer {
                 ']' => tokens.push(Token::new(pos.clone(), TokenType::RightBracker)),
                 '{' => tokens.push(Token::new(pos.clone(), TokenType::LeftCurly)),
                 '}' => tokens.push(Token::new(pos.clone(), TokenType::RightCurly)),
+                ':' => tokens.push(Token::new(pos.clone(), TokenType::Colon)),
                 ';' => tokens.push(Token::new(pos.clone(), TokenType::Semicolon)),
+                ',' => tokens.push(Token::new(pos.clone(), TokenType::Comma)),
                 _ => {
                     return Err(format!(
                         "unexpected character at {}:{}: {}",
