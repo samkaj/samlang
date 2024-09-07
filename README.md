@@ -8,8 +8,8 @@ Toy language, here be dragons :^)
 
 ## Usage
 
-Compile a file:
+For now, compile a file by sending it into stdin:
 
 ```bash
-cargo run
+cat <file>.sk | cargo run
 ```
