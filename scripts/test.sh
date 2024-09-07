@@ -14,7 +14,6 @@ FAIL=0
 for test in $TEST_DIR/*.sk; do
   ((TOT = TOT + 1))
   test_name=$(basename $test)
-  echo "Running test $test_name"
   status=$(head -n 1 $test)
   status=${status:8}
   $EXE $test > /dev/null
