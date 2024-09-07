@@ -14,6 +14,10 @@ pub enum Keyword {
     Void,
     If,
     Else,
+    Struct,
+    Interface,
+    Is,
+    Impl,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -50,6 +54,7 @@ pub enum TokenType {
     Semicolon,
     Colon,
     Comma,
+    Dot,
     Whitespace,
     Comment,
     Newline,

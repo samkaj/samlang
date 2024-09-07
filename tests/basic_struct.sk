@@ -1,0 +1,7 @@
+// test: 0
+struct Pos {
+  x: int,
+  y: int,
+}
+
+let x: Pos = { x = 1, y = 2};

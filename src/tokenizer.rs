@@ -92,6 +92,9 @@ impl Tokenizer {
                         "in" => {
                             tokens.push(Token::new(pos.clone(), TokenType::Keyword(Keyword::In)))
                         }
+                        "is" => {
+                            tokens.push(Token::new(pos.clone(), TokenType::Keyword(Keyword::Is)))
+                        }
                         "of" => {
                             tokens.push(Token::new(pos.clone(), TokenType::Keyword(Keyword::Of)))
                         }
@@ -121,6 +124,15 @@ impl Tokenizer {
                         "else" => {
                             tokens.push(Token::new(pos.clone(), TokenType::Keyword(Keyword::Else)))
                         }
+                        "struct" => {
+                            tokens.push(Token::new(pos.clone(), TokenType::Keyword(Keyword::Struct)))
+                        }
+                        "interface" => {
+                            tokens.push(Token::new(pos.clone(), TokenType::Keyword(Keyword::Interface)))
+                        }
+                        "impl" => {
+                            tokens.push(Token::new(pos.clone(), TokenType::Keyword(Keyword::Impl)))
+                        }
                         _ => tokens.push(Token::new(pos.clone(), TokenType::Identifier(keyword))),
                     }
                 }
@@ -135,6 +147,7 @@ impl Tokenizer {
                     }
                 }
                 '*' => tokens.push(Token::new(pos.clone(), TokenType::Operator(Op::Mul))),
+                '.' => tokens.push(Token::new(pos.clone(), TokenType::Dot)),
                 '/' => {
                     if let Some(&'/') = iter.peek() {
                         in_comment = true;

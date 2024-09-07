@@ -1,0 +1,32 @@
+// test: 0
+
+interface Printable {
+  fn print();
+  fn get_printed() -> str;
+}
+
+struct Point {
+  x: int,
+  y: int,
+}
+
+impl Point {
+  fn sum(this) -> int {
+    return this.x + this.y;
+  }
+}
+
+Point is Printable {
+  fn print() {
+    print("{}", this.x, this.y);
+  }
+
+  fn get_printed() -> str {
+    return format("{}", this.x, this.y);
+  }
+}
+
+fn main() -> int {
+  let p: Point = { x = 10, y = 0 };
+  p.print();
+}
