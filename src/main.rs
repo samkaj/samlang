@@ -2,6 +2,7 @@ use std::process;
 
 pub mod common;
 pub mod tokenizer;
+pub mod parser;
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();

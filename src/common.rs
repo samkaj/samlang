@@ -62,15 +62,73 @@ pub enum TokenType {
     EOF,
 }
 
+#[derive(Debug, Clone, PartialEq)]
 pub struct Token {
     pub token_type: TokenType,
     pub pos: Position,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Position {
     pub line: i64,
     pub col: i64,
+}
+
+// TBA: think about how to represent the AST. should declarations, statements, expressions, etc. be enums? e.g.: Declaration(DeclarationType)
+// This would keep the AST more organized and easier to traverse, possibly.
+pub enum NodeType {
+    Program,
+    FunctionDeclaration,
+    VariableDeclaration,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct Node {
+    pub token: Token, // FIXME: tokens are semi colons and stuff, we care about the type of the node. Therefore, we should have a NodeType enum
+    pub children: Vec<Node>,
+}
+
+pub struct Program {
+    pub functions: Vec<Function>,
+}
+
+pub struct Function {
+    pub name: String,
+    pub params: Vec<Declaration>,
+    pub body: Vec<Node>,
+}
+
+pub struct Declaration {
+    pub name: String,
+    pub value: Node,
+}
+
+pub enum Statement {
+    Declaration(Declaration),
+    Expression(Node),
+    Return(Node),
+    If(Node, Vec<Statement>, Vec<Statement>),
+    While(Node, Vec<Statement>),
+    For(Node, Node, Node, Vec<Statement>),
+    ForIn(Node, Node, Vec<Statement>),
+}
+
+pub enum Expression {
+    BinaryOp(Op, Box<Expression>, Box<Expression>),
+    UnaryOp(Op, Box<Expression>),
+    Literal(Token),
+    Identifier(Token),
+    Call(Token, Vec<Expression>),
+}
+
+pub enum Type {
+    Int,
+    Str,
+    Double,
+    Bool,
+    Void,
+    Struct(String),
+    Interface(String),
 }
 
 impl Token {
