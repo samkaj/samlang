@@ -1,8 +1,10 @@
 use std::process;
 
-pub mod common;
-pub mod tokenizer;
+use parser::Parser;
+
 pub mod parser;
+pub mod tokenizer;
+pub mod types;
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
@@ -15,16 +17,24 @@ fn main() {
     let source = std::fs::read_to_string(filename).expect("Failed to read file");
 
     let mut tokenizer = tokenizer::Tokenizer::new();
-    let tokens = tokenizer.tokenize(&source);
-    match tokens {
-        Ok(tokens) => {
-            tokenizer.print_tokens(&tokens);
-        }
+    let tokens = match tokenizer.tokenize(&source) {
+        Ok(tokens) => tokens,
         Err(msg) => {
             println!("{}", msg);
             process::exit(1);
         }
-    }
+    };
+
+    tokenizer.print_tokens(&tokens);
+
+    let mut parser = Parser::new(tokens);
+    let ast = match parser.parse() {
+        Ok(ast) => ast,
+        Err(msg) => {
+            println!("{}", msg);
+            process::exit(1);
+        }
+    };
 
     process::exit(0);
 }

@@ -1,6 +1,4 @@
-// https://petermalmgren.com/three-rust-parsers/
-
-use crate::common::{Keyword, Node, Token, TokenType};
+use crate::types::{Keyword, Node, Token, TokenType};
 
 pub struct Parser {
     tokens: Vec<Token>,
@@ -16,47 +14,7 @@ impl Parser {
     }
 
     pub fn parse(&mut self) -> Result<Node, String> {
-        self.parse_program()
-    }
-
-    /// A program is the top-level structure of a source file.
-    /// It can contain statements, functions, and other declarations.
-    fn parse_program(&mut self) -> Result<Node, String> {
-        let mut children: Vec<Node> = vec![];
-        while !self.end_of_tokens() {
-            match self.parse_declaration() {
-                Ok(n) => children.push(n),
-                Err(e) => return Err(e),
-            }
-        }
-
-        Ok(Node {
-            token: Token::new(
-                self.tokens[self.token_index].pos.clone(),
-                TokenType::Program,
-            ),
-            children,
-        })
-    }
-
-    /// A declaration is a statement that defines a variable or a function.
-    fn parse_declaration(&mut self) -> Result<Node, String> {
-        todo!();
-    }
-
-    /// A statement is a sequence of tokens that ends with a semicolon or is a block of statements.
-    fn parse_statement(&mut self) -> Result<Node, String> {
-        todo!();
-    }
-
-    /// A block is a sequence of statements enclosed in curly braces.
-    fn parse_block(&mut self) -> Result<Node, String> {
-        todo!();
-    }
-
-    /// An expression is a sequence of tokens that evaluates to a value.
-    fn parse_expression(&mut self) -> Result<Node, String> {
-        todo!();
+        todo!("parser");
     }
 
     fn end_of_tokens(&mut self) -> bool {
@@ -77,6 +35,7 @@ impl Parser {
         }
     }
 
+    // Potential FIXME: token types do not compare enums with contained values correctly
     fn match_token(&mut self, token_type: TokenType) -> bool {
         if let Some(curr) = self.current_token() {
             if curr.token_type == token_type {
@@ -88,5 +47,23 @@ impl Parser {
         }
 
         false
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use crate::types::{Position, Token, TokenType};
+
+    #[test]
+    fn match_token_types() {
+        let pos = Position { line: 0, col: 0 };
+        let str1 = Token {
+            token_type: TokenType::StrLiteral("hello".to_string()),
+            pos: pos.clone(),
+        };
+
+        let mut parser = Parser::new(vec![str1.clone()]);
+        assert!(parser.match_token(TokenType::StrLiteral("hello".to_string())));
     }
 }
