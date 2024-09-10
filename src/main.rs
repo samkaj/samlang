@@ -14,9 +14,9 @@ fn main() {
     }
 
     let filename = &args[1];
-    let source = std::fs::read_to_string(filename).expect("Failed to read file");
+    let source = std::fs::read_to_string(&filename).expect("Failed to read file");
 
-    let mut tokenizer = tokenizer::Tokenizer::new();
+    let mut tokenizer = tokenizer::Tokenizer::new(filename.to_string());
     let tokens = match tokenizer.tokenize(&source) {
         Ok(tokens) => tokens,
         Err(msg) => {
@@ -27,7 +27,7 @@ fn main() {
 
     tokenizer.print_tokens(&tokens);
 
-    let mut parser = Parser::new(tokens);
+    let mut parser = Parser::new(filename.to_string(), tokens);
     let ast = match parser.parse() {
         Ok(ast) => ast,
         Err(msg) => {

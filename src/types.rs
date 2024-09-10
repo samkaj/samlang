@@ -1,4 +1,31 @@
 #[derive(Debug, Clone, PartialEq)]
+pub struct Variable {
+    name: String,
+    value: Option<Node>,
+    var_type: Type,
+    pos: Position,
+}
+
+impl Variable {
+    pub fn new(name: String, value: Option<Node>, var_type: Type, pos: Position) -> Self {
+        Variable {
+            name,
+            value,
+            var_type,
+            pos,
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum Type {
+    Primitive(Primitive),
+    Struct(String),
+    Interface(String),
+    Pointer(Box<Type>),
+}
+
+#[derive(Debug, Clone, PartialEq)]
 pub enum Keyword {
     Let,
     Return,
@@ -9,10 +36,10 @@ pub enum Keyword {
     For,
     If,
     Else,
-    Struct,
-    Interface,
     Is,
     Impl,
+    Struct,
+    Interface,
     Type(Primitive),
 }
 
@@ -55,6 +82,7 @@ pub enum TokenType {
     Comment,
     Newline,
     RetArrow,
+    AnyExpression,
     EOF,
 }
 
@@ -74,6 +102,18 @@ pub struct Position {
 pub struct Node {
     pub pos: Position,
     pub children: Vec<Node>,
+}
+
+impl Node {
+    pub fn new(pos: Position, children: Vec<Node>) -> Self {
+        Node { pos, children }
+    }
+}
+
+impl Default for Node {
+    fn default() -> Self {
+        Node::new(Position { line: 0, col: 0 }, vec![])
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]

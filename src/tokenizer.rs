@@ -1,11 +1,13 @@
-use crate::types::{Keyword, Op, Position, Token, TokenType, Primitive};
+use crate::types::{Keyword, Op, Position, Primitive, Token, TokenType};
 use std::iter::{self, from_fn};
 
-pub struct Tokenizer {}
+pub struct Tokenizer {
+    file: String,
+}
 
 impl Tokenizer {
-    pub fn new() -> Tokenizer {
-        Tokenizer {}
+    pub fn new(file: String) -> Tokenizer {
+        Tokenizer { file }
     }
 
     pub fn print_tokens(&self, tokens: &Vec<Token>) {
@@ -214,8 +216,8 @@ impl Tokenizer {
                 ',' => tokens.push(Token::new(pos.clone(), TokenType::Comma)),
                 _ => {
                     return Err(format!(
-                        "unexpected character at {}:{}: {}",
-                        &pos.line, pos.col, ch
+                        "unexpected character at {}{}:{}: {}",
+                        self.file, &pos.line, pos.col, ch
                     ));
                 }
             }
