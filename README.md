@@ -8,8 +8,16 @@ Toy language, here be dragons :^)
 
 ## Usage
 
-For now, compile a file by sending it into stdin:
+### Compile a file
 
-```bash
-cat <file>.sk | cargo run
+```console
+cargo run -- <source-file>
 ```
+
+### Run test suite
+
+```console
+cargo test # unit tests
+./scripts/test.sh # integration tests
+```
+
