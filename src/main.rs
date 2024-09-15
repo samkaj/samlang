@@ -1,5 +1,7 @@
 use std::process;
 
+use parser::Parser;
+
 pub mod parser;
 pub mod tokenizer;
 pub mod types;
@@ -23,6 +25,12 @@ fn main() {
         }
     };
 
-    tokenizer.print_tokens(&tokens);
+    //tokenizer.print_tokens(&tokens);
+
+    let mut parser = Parser::new(filename.to_string(), tokens);
+    if let Err(err) = parser.parse() {
+        println!("{}", err);
+        process::exit(1);
+    }
     process::exit(0);
 }

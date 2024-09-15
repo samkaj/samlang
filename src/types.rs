@@ -1,3 +1,67 @@
+use std::collections::HashMap;
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct AST {
+    pub definitions: Vec<Definition>,
+}
+
+impl AST {
+    pub fn new() -> Self {
+        AST {
+            definitions: vec![],
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum Statement {
+    DeclStmt,
+    ForStmt,
+    ExprStmt,
+    AssignStmt,
+    IfStmt,
+    ElseStmt,
+    Block(Box<Vec<Statement>>),
+    RetStmt(Expression),
+    EmptyStmt,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum Definition {
+    FnDef(String, Vec<(String, Type)>, Option<Type>, Statement),
+    GlobalDef,
+    StructDef(Struct),
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum Type {
+    Int(Option<i64>),
+    Double(Option<f64>),
+    String(Option<String>),
+    Bool(Option<bool>),
+    Void,
+    Struct(String),
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct Struct {
+    name: String,
+    fields: HashMap<String, Box<Type>>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum Expression {
+    VarDecl(String),
+    VarDeclInit(String),
+    VarAccess(String),
+    AnonFnDef(HashMap<String, Type>),
+    FnCall(String),
+    VarAssign(Box<Expression>, Box<Expression>),
+    BinaryOp(Op, Box<Expression>, Box<Expression>),
+    UnaryOp(Box<Expression>),
+    Literal(Type),
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum Keyword {
     Let,
@@ -14,6 +78,7 @@ pub enum Keyword {
     Struct,
     Interface,
     Type(Primitive),
+    Any,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -47,6 +112,7 @@ pub enum TokenType {
     RightBracket,
     LeftCurly,
     RightCurly,
+    Pipe,
     Semicolon,
     Colon,
     Comma,
