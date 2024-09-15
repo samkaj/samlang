@@ -1,4 +1,4 @@
-// test: 0
+// test: 1
 fn fib(n: int) -> int {
    if n <= 1 {
         return n;

@@ -1,0 +1,5 @@
+// test: 0
+fn nop() {}
+fn nop_with_arg(n: int, f: double) {}
+fn nop_with_arg_ret(n: int) -> int {}
+fn nop_with_ret() -> int {}

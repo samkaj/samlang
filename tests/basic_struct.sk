@@ -1,4 +1,4 @@
-// test: 0
+// test: 1
 struct Pos {
   x: int,
   y: int,
